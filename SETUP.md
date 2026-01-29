@@ -47,24 +47,37 @@ aws ec2 create-key-pair --key-name prod-key --query 'KeyMaterial' --output text 
 chmod 400 prod-key.pem
 ```
 
-## 3. Deployment
-You can deploy via GitHub Actions (configured in `.github/workflows/deploy.yml`) or locally.
+## 3. Configure GitHub Actions OIDC (Recommended)
+Instead of static Access Keys, we will use OIDC for security.
+
+1.  **Deploy the OIDC Infrastructure:**
+    You need to tell AWS to trust your GitHub repository.
+    ```bash
+    cd terraform/live/global/oidc
+    terraform init
+    # Configure your AWS credentials manually for this step
+    export AWS_PROFILE=your-profile
+    # Replace with your actual username/repo
+    export TF_VAR_github_repo="your-username/fivexl-challenge"
+    terraform apply
+    ```
+
+2.  **Add Secret to GitHub:**
+    *   Take the `role_arn` output from the previous step.
+    *   Go to your GitHub Repo -> Settings -> Secrets and variables -> Actions.
+    *   Add a New Repository Secret:
+        *   Name: `AWS_ROLE_ARN`
+        *   Value: `arn:aws:iam::123456789012:role/GitHubActions-Terraform-Role` (The output from `terraform apply`)
+
+## 4. Deployment
+The pipeline is now configured to use OIDC. Simply push to `main` to deploy.
 
 **Local Deployment:**
+You can still deploy locally using your AWS profile:
 
 ```bash
 cd terraform/live/dev
-export AWS_PROFILE=your-dev-profile  # If using profiles
+export AWS_PROFILE=your-dev-profile
 terraform init
 terraform apply
 ```
-
-## 4. GitHub Actions Setup
-To use the CI/CD pipeline:
-1. Create a new repository on GitHub.
-2. Push this code to it.
-3. Add the following **Secrets** to your GitHub Repo settings:
-   - `AWS_ACCESS_KEY_ID`
-   - `AWS_SECRET_ACCESS_KEY`
-
-The pipeline will automatically plan and apply changes to Dev and Prod on push to `main`.
