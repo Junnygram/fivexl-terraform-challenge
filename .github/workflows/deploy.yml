@@ -10,6 +10,9 @@ jobs:
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
+    concurrency:
+      group: terraform-${{ matrix.environment }}
+      cancel-in-progress: false
     strategy:
       matrix:
         environment: [dev, prod]
