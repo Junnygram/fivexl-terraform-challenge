@@ -9,16 +9,21 @@ on:
         default: 'dev'
         type: choice
         options:
-        - dev
-        - prod
-
-permissions:
-  id-token: write
-  contents: read
+          - dev
+          - prod
 
 jobs:
   destroy:
+    name: Terraform Destroy
     runs-on: ubuntu-latest
+    concurrency:
+      group: terraform-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -33,9 +38,9 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
-        working-directory: terraform/live/${{ inputs.environment }}
+        working-directory: terraform/live/${{ github.event.inputs.environment }}
         run: terraform init
 
       - name: Terraform Destroy
-        working-directory: terraform/live/${{ inputs.environment }}
+        working-directory: terraform/live/${{ github.event.inputs.environment }}
         run: terraform destroy -auto-approve
