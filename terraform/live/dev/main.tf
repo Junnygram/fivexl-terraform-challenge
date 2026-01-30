@@ -18,7 +18,7 @@ module "website" {
   environment   = "dev"
   vpc_cidr      = "10.0.0.0/16"
   instance_type = "t3.micro"
-  ssh_key_name  = "dev-key"
+  ssh_key_name  = "dev-key-v2"
   
   html_content = replace(file("${path.module}/../../../src/index.html"), "{{ENV}}", "DEV")
 }

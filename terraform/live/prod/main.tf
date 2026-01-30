@@ -20,7 +20,7 @@ module "website" {
   environment   = "prod"
   vpc_cidr      = "10.1.0.0/16" # Different CIDR for Prod
   instance_type = "t3.small"    # Larger instance for Prod
-  ssh_key_name  = "prod-key"
+  ssh_key_name  = "prod-key-v2"
   
   html_content = replace(file("${path.module}/../../../src/index.html"), "{{ENV}}", "PROD")
 }
