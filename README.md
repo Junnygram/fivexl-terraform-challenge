@@ -29,6 +29,27 @@ I have chosen the following two methods for hosting the website:
 
 ## Architecture
 
+### System Diagram
+```mermaid
+graph TD
+    User((User)) -->|HTTPS| CloudFront[CloudFront CDN]
+    User -->|HTTP| ALB[Application Load Balancer]
+    
+    subgraph "Strategy A: Static"
+    CloudFront -->|OAC| S3[S3 Bucket\n(Unqiue Content)]
+    end
+    
+    subgraph "Strategy B: Dynamic (VPC)"
+        ALB -->|Target Group| ASG[Auto Scaling Group]
+        subgraph "AZ 1"
+            ASG --> EC2_1[EC2 Instance]
+        end
+        subgraph "AZ 2"
+            ASG --> EC2_2[EC2 Instance]
+        end
+    end
+```
+
 ### Directory Structure
 ```
 .

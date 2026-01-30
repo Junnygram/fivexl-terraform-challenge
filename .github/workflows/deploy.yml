@@ -31,6 +31,10 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        continue-on-error: true # For demo purposes, don't fail, just warn
+
       - name: Terraform Init
         working-directory: terraform/live/${{ matrix.environment }}
         run: terraform init

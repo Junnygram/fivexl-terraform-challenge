@@ -12,10 +12,14 @@ Before running Terraform code that requires a backend, you must create the S3 bu
 
 ```bash
 # Variables
+# IMPORTANT: These must match what is in terraform/live/*/main.tf
 REGION="us-east-1"
 BUCKET_DEV="fivexl-terraform-state-dev"
 BUCKET_PROD="fivexl-terraform-state-prod"
 TABLE="fivexl-terraform-locks"
+
+# If using a specific profile, add --profile your-profile-name to the commands below
+# Example: aws s3api create-bucket --bucket $BUCKET_DEV --region $REGION --profile personal
 
 # Create S3 Buckets
 aws s3api create-bucket --bucket $BUCKET_DEV --region $REGION

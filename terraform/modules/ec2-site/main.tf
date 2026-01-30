@@ -156,7 +156,22 @@ resource "aws_launch_template" "app" {
               yum install -y httpd
               systemctl start httpd
               systemctl enable httpd
-              echo '${var.html_content}' > /var/www/html/index.html
+
+              # Get Instance Metadata (IMDSv2)
+              TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+              INSTANCE_ID=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/instance-id)
+              AZ=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
+              
+              # Create Dynamic HTML
+              cat <<HTML > /var/www/html/index.html
+              ${var.html_content}
+              <hr>
+              <p>Server Info:</p>
+              <ul>
+                <li>Instance ID: <strong>$INSTANCE_ID</strong></li>
+                <li>Availability Zone: <strong>$AZ</strong></li>
+              </ul>
+              HTML
               EOF
   )
 
