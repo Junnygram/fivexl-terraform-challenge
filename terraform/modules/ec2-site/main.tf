@@ -139,11 +139,22 @@ data "aws_ami" "amazon_linux_2" {
   }
 }
 
+# --- Key Pair ---
+resource "tls_private_key" "pk" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "kp" {
+  key_name   = var.ssh_key_name
+  public_key = tls_private_key.pk.public_key_openssh
+}
+
 resource "aws_launch_template" "app" {
   name_prefix   = "${var.environment}-lt-"
   image_id      = data.aws_ami.amazon_linux_2.id
   instance_type = var.instance_type
-  key_name      = var.ssh_key_name
+  key_name      = aws_key_pair.kp.key_name
 
   network_interfaces {
     associate_public_ip_address = true
