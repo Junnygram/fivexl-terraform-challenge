@@ -1,3 +1,4 @@
+# Deploying infrastructure for dev environment
 provider "aws" {
   region = "us-east-1"
 }

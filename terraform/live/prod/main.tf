@@ -1,3 +1,4 @@
+# Deploying infrastructure for prod environment
 provider "aws" {
   region = "us-east-1"
   # In a real multi-account setup, you might use a profile or assume_role here
